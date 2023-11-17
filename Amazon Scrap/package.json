@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "amazon-buddy": "^2.2.45"
+    "amazon-buddy": "^2.2.45",
+    "convert-array-to-csv": "^2.0.0"
   }
 }

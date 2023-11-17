@@ -1,4 +1,6 @@
 const amazonScraper = require('amazon-buddy');
+const { convertArrayToCSV } = require('convert-array-to-csv');
+const fs = require('fs');
 
 const keywords = ["Laptop", "Smartphone", "Headphones", "Bluetooth Speaker", "Kitchenware", "Sports Equipment", "Fitness Tracker", "Men's Shoes", "Women's Shoes", "Children's Clothing", "Novels", "Textbooks", "Groceries", "Pet Supplies", "Cosmetics", "Skin Care", "Hair Care", "Toys", "Video Games", "Gardening Tools", "Outdoor Furniture", "Indoor Furniture", "Cookbooks", "Musical Instruments", "Car Accessories", "Bike", "Watches", "Jewelry", "Sunglasses", "Handbags", "Backpacks", "Luggage", "Cameras", "Printers", "Office Supplies", "Stationery", "Board Games", "Craft Supplies", "Home Decor", "Bedding", "Kitchen Appliances", "Television", "Audio Equipment", "Smart Home Devices", "Books", "Ebooks", "Magazines", "Music CDs", "Vinyl Records", "DVDs", "Blu-Ray Discs", "Baby Clothing", "Baby Gear", "Maternity Clothing", "Men's Clothing", "Women's Clothing", "Men's Accessories", "Women's Accessories", "Shoes", "Socks", "Underwear", "Swimwear", "Electronics", "Computer Accessories", "Software", "Hardware Tools", "Painting Supplies", "Plumbing Equipment", "Lighting Fixtures", "Camping Gear", "Fishing Equipment", "Hiking Gear", "Bathroom Accessories", "Kitchen Gadgets", "Coffee Maker", "Tea Accessories", "Wine Accessories", "Grilling Tools", "Yoga Mat", "Workout Clothing", "Running Shoes", "Fitness DVDs", "Protein Powder", "Vitamins", "Supplements", "First Aid Supplies", "Prescription Glasses", "Contact Lenses", "Sewing Machine", "Knitting Supplies", "Scrapbooking Materials", "Party Decorations", "Gift Wrapping Supplies", "Holiday Decorations", "Costumes", "Candles", "Essential Oils", "Cleaning Supplies", "Laundry Detergent", "Vacuum Cleaner"]
 
@@ -7,7 +9,7 @@ const keywords = ["Laptop", "Smartphone", "Headphones", "Bluetooth Speaker", "Ki
 const getProductByKeyword = async () => {
     const searchProducts = []
 
-    for (const keyword of keywords) {
+    for (const keyword of keywords.slice(0, 1)) {
         const products = await amazonScraper.products({ keyword: keyword, number:50, rating: [4, 5]});
         
         for (const product of products.result) {
@@ -40,13 +42,26 @@ const getReviewsByAsin = async (asin) => {
     }
 }
 
+const writeCSV = (products) => {
+    const csvString = convertArrayToCSV(products);
+    
+    fs.writeFile('amazon_scrap.csv', csvString, 'utf8', function (err) {
+        if (err) {
+            console.log('Some error occured - file either not saved or corrupted file saved.');
+        } else{
+            console.log('It\'s saved!');
+        }
+    });
+}
+
+
+
 const main = async() => {
     
     const products = await getProductByKeyword();
     const finalProducts = []
 
     for (product of products) {
-        // product.review_title = "fe"
         const res = await getReviewsByAsin(product.asin);
 
         if (res !== null){
@@ -54,13 +69,11 @@ const main = async() => {
             product.review_content = res.content;
 
             finalProducts.push(product);
-        }
-
-        
+        }    
     }
     
-    console.log(finalProducts);
-    
-}
+    writeCSV(finalProducts);
+    console.log("Done");
+}   
 
 main();
