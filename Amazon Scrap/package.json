@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.451.0",
     "amazon-buddy": "^2.2.45",
     "convert-array-to-csv": "^2.0.0"
   }
