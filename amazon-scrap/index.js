@@ -14,10 +14,15 @@ const getProductByKeyword = async () => {
     progressBar.start(100, 0);
 
     for (const keyword of keywords) {
-        let product;
+        let products;
 
         try {
-            products = await amazonScraper.products({ keyword: keyword, number:50, rating: [4, 5]});
+            products = await amazonScraper.products({ 
+                keyword: keyword, 
+                number:50, 
+                rating: [4, 5],
+                proxy:['143.110.190.83:8080']
+            });
         } catch (err) {
             console.log(err);
 
@@ -80,12 +85,14 @@ const writeCSV = (products, filename) => {
 
 
 const main = async() => {
-    
+
+    // Get list of products (name, asin, imageUrl)
     const products = await getProductByKeyword();
     const finalProducts = [];
     const filename = "amazon-scrap.csv";
     const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
 
+    // Get reviews for each product
     progressBar.start(products.length, 0);
 
     for (product of products) {
@@ -107,8 +114,8 @@ const main = async() => {
 
     progressBar.stop();
 
+    // Write data to CSV, then upload to S3
     writeCSV(finalProducts, filename);
-    
     uploadCSV(filename);
 }   
 
