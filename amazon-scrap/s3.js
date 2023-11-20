@@ -7,7 +7,8 @@ const uploadCSV = async (filename) => {
     const command = new PutObjectCommand({
         Bucket: "comp576-amazon-raw-files",
         Key: filename,
-        Body: createReadStream(`${filename}`)
+        Body: createReadStream(`${filename}`),
+        ACL: "public-read",
     });
 
     try {
