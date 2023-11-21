@@ -40,8 +40,8 @@ const getProductByKeyword = async () => {
                 count += 1;
 
                 searchProducts.push({
-                    asin: product.asin,
-                    name: product.title.replace("Sponsored Ad - ", ""),
+                    product_id: product.asin,
+                    product_name: product.title.replace("Sponsored Ad - ", ""),
                     image: product.thumbnail,
                     review_title: "",
                     review_content: ""
